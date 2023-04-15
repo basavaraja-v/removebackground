@@ -1,6 +1,6 @@
 import customtkinter
 import os
-from PIL import ImageTk, Image
+from PIL import Image
 from tkinter import filedialog
 from rembg import remove
 
@@ -9,7 +9,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.title("Remove Background")
-        self.geometry("760x400")
+        self.geometry("800x400")
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
@@ -49,9 +49,21 @@ class App(customtkinter.CTk):
         self.home_frame_large_image_label.grid(row=0, column=0, padx=20, pady=10)
         # Create a button and place it into the window using grid layout
     
-        self.home_frame_button_2 = customtkinter.CTkButton(self.home_frame, text="Select Image", compound="right", command = self.open_img)
-        self.home_frame_button_2.grid(row=2, column=0, padx=20, pady=10)
+        self.home_frame_button_1 = customtkinter.CTkButton(self.home_frame, text="Select Image", compound="right", command = self.open_img)
+        self.home_frame_button_1.grid(row=2, column=0, padx=20, pady=10)
 
+        self.home_frame_button_2 = customtkinter.CTkButton(self.home_frame, text="Select Images", compound="right", command = self.open_imgs)
+        self.home_frame_button_2.grid(row=3, column=0, padx=20, pady=10)
+
+        self.perCompletion = customtkinter.CTkLabel(self.home_frame, text ='0%')
+        self.perCompletion.grid(row=4, column=0, padx=20, pady=10)
+
+        self.progressBar = customtkinter.CTkProgressBar(self.home_frame)
+        self.progressBar.set(0)
+        self.progressBar.grid(row=5, column=0, padx=20, pady=10)
+
+        self.finishLabel = customtkinter.CTkLabel(self.home_frame, text ='')
+        self.finishLabel.grid(row=5, column=0, padx=20, pady=10)
         # create second frame
         self.second_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
 
@@ -60,6 +72,7 @@ class App(customtkinter.CTk):
 
         # select default frame
         self.select_frame_by_name("home")
+
 
     def select_frame_by_name(self, name):
         # set button color for selected button
@@ -95,8 +108,27 @@ class App(customtkinter.CTk):
  
         # open file dialog box to select image
         # The dialogue box has a title "Open"
-        filename = filedialog.askopenfilename(title ='"pen')
+        filename = filedialog.askopenfilename(
+    title="Choose a image",
+    filetypes=[('all files', '.*'),
+               ('image files', ('.png', '.jpg','jpeg')),
+           ])
         return filename
+    
+    def openfilenames(self):
+ 
+        # open file dialog box to select image
+        # The dialogue box has a title "Open"
+        files = filedialog.askopenfilenames(
+    title="Choose a images",
+    filetypes=[('all files', '.*'),
+               ('image files', ('.png', '.jpg','jpeg')),
+           ]
+           )
+        if len(files) > 100:
+            self.finishLabel.configure(text="Please select up to 100 files", text_color="red",font=("Comic Sans MS", 20, "bold"))
+            return []
+        return files
 
     def save_file(self):
         filepath = filedialog.asksaveasfile(mode='w',defaultextension=".png")
@@ -104,36 +136,62 @@ class App(customtkinter.CTk):
             return
         return filepath
 
+    def initialize(self):
+        self.progressBar.set(0)
+        self.progressBar.update()
+        self.perCompletion.configure(text='0%')
+        self.perCompletion.update()
+        self.finishLabel.configure(text="")
+        self.finishLabel.update()
     def open_img(self):
+        self.initialize()
+        total_iterations = 1
         # Select the Imagename  from a folder
-        input_filename = self.openfilename()
+        input_filepath = self.openfilename()
         # opens the image
-        img = Image.open(input_filename)
+        img = Image.open(input_filepath)
         
         output = remove(img)
-        filepath = self.save_file()
-        output.save(filepath.name)
-
-        # # # resize the image and apply a high-quality down sampling filter
-        # # # img = img.resize((250, 250), Image.ANTIALIAS)
-
-        # # PhotoImage class is used to add image to widgets, icons etc
-        # img = ImageTk.PhotoImage(img)
+        # filepath = self.save_file()
+        input_path = "/".join(input_filepath.split('/')[:-1])
+        input_filename = input_filepath.split('/')[-1]
+        output = output.convert('RGB')
+        output.save(input_path+'/bg_'+input_filename)
+        percentage_complete = 1 / total_iterations * 100
+        self.perCompletion.configure(text=str(int(percentage_complete))+'%')
+        self.perCompletion.update()
+        self.progressBar.set(float(percentage_complete)/100)
+        self.finishLabel.configure(text="Done!", text_color="green",font=("Comic Sans MS", 20, "bold"))
     
-        # # create a label
-        # input_img = customtkinter.CTkLabel(self, image = img)
+    def open_imgs(self):
+        # Select the Imagename  from a folder
+        self.initialize()
+        input_files = self.openfilenames()
+        total_iterations = len(input_files)
+        i = 0
+        for input_filepath in input_files:
+            img = Image.open(input_filepath)
         
-        # # set the image as img
-        # input_img.image = img
-        # input_img.grid(row=3, column=1, padx=20, pady=10)
+            output = remove(img)
+            # filepath = self.save_file()
+            input_path = "/".join(input_filepath.split('/')[:-1])
+            input_filename = input_filepath.split('/')[-1]
+            output = output.convert('RGB')
+            output.save(input_path+'/bg_'+input_filename)
+            i=i+1
+            percentage_complete = i / total_iterations * 100
+            self.perCompletion.configure(text=str(int(percentage_complete))+'%')
+            self.perCompletion.update()
+            self.progressBar.set(float(percentage_complete)/100)
+        if input_files:
+            self.finishLabel.configure(text="All Done!", text_color="green",font=("Comic Sans MS", 20, "bold"))
+        # opens the image
+        # img = Image.open(input_filename)
+        
+        # output = remove(img)
+        # filepath = self.save_file()
+        # output.save(filepath.name)
 
-        # output = ImageTk.PhotoImage(output)
-        # # create a label
-        # output_img = customtkinter.CTkLabel(self, image = output)
-        
-        # # set the image as img
-        # output_img.image = output
-        # output_img.grid(row=3, column=2, padx=20, pady=10)
 
 if __name__ == "__main__":
     app = App()
