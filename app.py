@@ -4,6 +4,20 @@ from PIL import Image
 from tkinter import filedialog
 from rembg import remove
 
+import os
+import shutil
+
+# Get the path to the u2net.onnx file
+u2net_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'u2net.onnx')
+
+# Create the .u2net directory if it doesn't exist
+u2net_dir = os.path.expanduser('~/.u2net')
+if not os.path.exists(u2net_dir):
+    os.makedirs(u2net_dir)
+
+# Move the u2net.onnx file to the .u2net directory
+shutil.move(u2net_path, os.path.join(u2net_dir, 'u2net.onnx'))
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
