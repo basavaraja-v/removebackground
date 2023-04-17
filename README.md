@@ -1,3 +1,6 @@
+# Example:
+(https://github.com/royaldevops/removebackground/blob/main/assets/0.png)
+
 1. python3.9 -m venv rmbg_venv
 2. source rmbg_venv/bin/activate 
 3. py2applet --make-setup app.py
