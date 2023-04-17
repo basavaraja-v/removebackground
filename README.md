@@ -5,4 +5,4 @@
 5. dist/RemoveBackground.app/Contents/MacOS/RemoveBackground
 # For windows
 1. https://www.youtube.com/watch?v=p3tSLatmGvU&t=803s
-2. pyinstaller --noconfirm --onedir --windowed --add-data "c:\users\basavaraj\appdata\local\programs\python\python310\lib\site-packages/customtkinter;customtkinter/" --icon=icon.png --name=RemoveBackground" app.py
+2. pyinstaller --noconfirm --onedir --windowed --add-data="c:\users\basavaraj\appdata\local\programs\python\python310\lib\site-packages/customtkinter;customtkinter/ --add-data="C:\Users\USERNAME\.u2net\u2net.onnx;." --icon=icon.png --name=RemoveBackground" app.py
