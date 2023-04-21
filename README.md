@@ -1,4 +1,4 @@
-#Description:
+# Description:
 Our Background Removal FastAPI is a powerful tool that allows you to easily remove backgrounds from images with lightning-fast speed and exceptional accuracy. Built on the popular FastAPI framework, our app is designed to handle a high volume of requests with ease, making it perfect for businesses and organizations of all sizes.
 
 With our FastAPI, you can remove backgrounds from images in just a few seconds, and with our advanced algorithms, you'll get precise and accurate results every time. Plus, our app is easy to integrate into your existing workflow, with comprehensive documentation and support available.
